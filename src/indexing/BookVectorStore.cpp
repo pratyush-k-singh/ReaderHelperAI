@@ -1,4 +1,4 @@
-#include "BookVectorStore.hpp"
+#include "book_recommender/BookVectorStore.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cstring>

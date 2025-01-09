@@ -1,17 +1,15 @@
 # Book Recommender
 
-A modern C++ library for building intelligent book recommendation systems using semantic search and machine learning.
+A modern C++ book recommendation system leveraging Groq's LLMs for intelligent semantic search and natural language understanding.
 
 ## 🌟 Features
 
-- **Smart Recommendations**: Uses advanced semantic search to understand book themes and reader preferences
-- **Flexible Filtering**: Filter by genre, rating, publication year, language, and more
-- **Similar Book Discovery**: Find books similar to your favorites
-- **Author Recommendations**: Explore other works by authors you enjoy
-- **Series Support**: Track and recommend book series
-- **Rich Metadata**: Comprehensive book information including ratings, reviews, and publication details
-- **Fast Search**: Efficient vector similarity search using FAISS
-- **Modern C++**: Built with C++17, emphasizing modern practices and performance
+- **Advanced LLM Integration**: Uses Groq's Mixtral model for text understanding and embeddings
+- **Smart Recommendations**: Semantic search with natural language queries
+- **Intelligent Explanations**: LLM-generated explanations for recommendations
+- **Fast Similarity Search**: FAISS-powered vector search
+- **Rich Filtering**: Filter by genre, rating, publication year, language, and more
+- **Modern C++**: Built with C++17, emphasizing performance and clean design
 
 ## 🚀 Quick Start
 
@@ -20,34 +18,41 @@ A modern C++ library for building intelligent book recommendation systems using 
 - CMake 3.15 or higher
 - C++17 compatible compiler
 - FAISS library
-- LibTorch
+- cpprestsdk
 - spdlog
 - nlohmann_json
-- Python 3.7+ (for model conversion)
-- PyTorch and Transformers (for model conversion)
+- OpenMP (optional, for performance)
+- Groq API key
+
+### Environment Setup
+
+```bash
+# Set your Groq API key
+export GROQ_API_KEY=your_api_key_here
+
+# Install dependencies (Ubuntu/Debian)
+sudo apt-get update && sudo apt-get install -y \
+    build-essential \
+    cmake \
+    libfaiss-dev \
+    libcpprest-dev \
+    libspdlog-dev \
+    nlohmann-json3-dev \
+    libssl-dev \
+    libomp-dev
+```
 
 ### Installation
 
-1. **Clone the repository**
 ```bash
+# Clone the repository
 git clone https://github.com/username/book-recommender.git
 cd book-recommender
-```
 
-2. **Set up the model**
-```bash
-# Install Python dependencies
-pip install torch transformers
-
-# Convert the model
-cd models
-python convert_model.py
-cd ..
-```
-
-3. **Build the project**
-```bash
+# Create build directory
 mkdir build && cd build
+
+# Configure and build
 cmake ..
 make -j8
 
@@ -58,39 +63,7 @@ ctest
 sudo make install
 ```
 
-### Model Setup Details
-
-The book recommender uses the BGE (BAAI General Embeddings) model for text embedding. The `convert_model.py` script will:
-
-1. Download the pre-trained model from Hugging Face
-2. Convert it to TorchScript format
-3. Save the model and tokenizer in the correct format
-4. Verify the conversion
-
-If you prefer to set up the model manually:
-
-```bash
-# Create the models directory
-mkdir -p models/BAAI/bge-small-en-v1.5
-
-# Download directly from Hugging Face
-wget https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main/model.safetensors
-wget https://huggingface.co/BAAI/bge-small-en-v1.5/resolve/main/tokenizer.json
-
-# Then convert using the provided script
-python models/convert_model.py
-```
-
-The model files should be structured as:
-```
-models/
-└── BAAI/
-    └── bge-small-en-v1.5/
-        ├── model.pt         # The converted TorchScript model
-        └── tokenizer.json   # The tokenizer configuration
-```
-
-### Basic Usage
+### Quick Example
 
 ```cpp
 #include <book_recommender/BookRecommender.hpp>
@@ -99,7 +72,6 @@ int main() {
     // Initialize recommender
     book_recommender::BookRecommender::RecommenderConfig config{
         .data_file = "books.csv",
-        .embedding_dimension = 384,
         .cache_size = 1000
     };
     
@@ -107,126 +79,88 @@ int main() {
 
     // Get recommendations
     auto recommendations = recommender.getRecommendations(
-        "fantasy books with magic and adventure",
+        "Looking for science fiction books that explore artificial intelligence and consciousness",
         {
-            .genres = {"fantasy"},
+            .genres = {"science fiction"},
             .min_rating = 4.0
         }
     );
 
     // Process results
     for (const auto& rec : recommendations) {
-        std::cout << "Title: " << rec.book.getTitle() << "\n";
-        std::cout << "Author: " << rec.book.getAuthor() << "\n";
-        std::cout << "Rating: " << rec.book.getAverageRating() << "/5.0\n";
-        std::cout << "Why recommended: " << rec.explanation << "\n\n";
+        std::cout << "📚 " << rec.book.getTitle() << "\n";
+        std::cout << "✍️  " << rec.book.getAuthor() << "\n";
+        std::cout << "⭐ " << rec.book.getAverageRating() << "/5.0\n";
+        std::cout << "💡 " << rec.explanation << "\n\n";
     }
 
     return 0;
 }
 ```
 
+## 🔧 Advanced Configuration
+
+### Groq API Configuration
+
+The system uses Groq's Mixtral model for:
+- Text embeddings for semantic search
+- Query enhancement and understanding
+- Natural language explanations
+
+You can configure the Groq client behavior:
+```cpp
+// In your environment or configuration file
+export GROQ_API_KEY=your_api_key
+export GROQ_MODEL=mixtral-8x7b-32768  // Default model
+export GROQ_API_TIMEOUT=30  // Timeout in seconds
+```
+
+### Performance Tuning
+
+```cpp
+BookRecommender::RecommenderConfig config{
+    .cache_size = 2000,         // Increase cache size
+    .use_approximate_search = true,  // Faster but slightly less accurate
+    .num_threads = 8            // OpenMP threads
+};
+```
+
 ## 📚 Documentation
 
 ### Key Components
 
-1. **BookRecommender**: Main interface for recommendation functionality
-2. **BookQueryEngine**: Handles query processing and recommendation logic
-3. **BookVectorStore**: Manages vector similarity search using FAISS
-4. **BookDataLoader**: Handles data loading and preprocessing
-5. **Book**: Core data structure for book information
+1. **BookRecommender**: Main interface
+2. **BookQueryEngine**: Query processing with Groq integration
+3. **BookVectorStore**: FAISS-based similarity search
+4. **GroqClient**: Handles Groq API interactions
 
-### Common Tasks
+### API Documentation
 
-#### Getting Recommendations
-```cpp
-// Get basic recommendations
-auto recommendations = recommender.getRecommendations(
-    "science fiction with AI themes"
-);
-
-// Get recommendations with filters
-BookQueryEngine::QueryFilter filter{
-    .genres = {"science fiction"},
-    .min_rating = 4.0,
-    .min_ratings_count = 1000,
-    .publication_year_start = 2000
-};
-auto filtered_recommendations = recommender.getRecommendations(query, filter);
+Generate the documentation:
+```bash
+cd build
+cmake .. -DBUILD_DOCS=ON
+make doc
 ```
 
-#### Finding Similar Books
-```cpp
-// Find similar books
-auto similar_books = recommender.getSimilarBooks("book_id");
-```
-
-#### Author Recommendations
-```cpp
-// Get author recommendations
-auto author_books = recommender.getAuthorRecommendations("Author Name");
-```
-
-## 🛠️ Building from Source
-
-### Dependencies
-
-1. **FAISS**
-   ```bash
-   sudo apt-get install libfaiss-dev
-   ```
-
-2. **LibTorch**
-   ```bash
-   wget https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-1.9.0%2Bcpu.zip
-   unzip libtorch-cxx11-abi-shared-with-deps-1.9.0+cpu.zip
-   ```
-
-3. **Other Dependencies**
-   ```bash
-   sudo apt-get install libspdlog-dev nlohmann-json3-dev
-   ```
-
-4. **Python Dependencies** (for model conversion)
-   ```bash
-   pip install torch transformers
-   ```
-
-### Building
+## 🧪 Testing
 
 ```bash
-# Setup model
-cd models
-python convert_model.py
-cd ..
-
-# Build project
-mkdir build && cd build
-cmake .. -DCMAKE_PREFIX_PATH=/path/to/libtorch
-make -j8
-```
-
-### Running Tests
-
-```bash
+# Build and run tests
 cd build
 cmake .. -DBUILD_TESTING=ON
 make
 ctest --output-on-failure
 ```
 
-## 🤝 Contributing
-
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see [LICENSE](LICENSE).
 
 ## 🙏 Acknowledgments
 
+- Groq for their powerful LLM API
 - FAISS by Facebook Research
-- LibTorch by PyTorch
-- BGE Model by BAAI
+- cpprestsdk by Microsoft
 - spdlog by gabime
 - JSON for Modern C++ by nlohmann

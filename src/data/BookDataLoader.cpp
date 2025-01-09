@@ -1,9 +1,8 @@
-#include "BookDataLoader.hpp"
+#include "book_recommender/BookDataLoader.hpp"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <regex>
-#include "../config/Config.hpp"
 #include <spdlog/spdlog.h>
 
 namespace book_recommender {

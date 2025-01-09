@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Find dependencies
+find_dependency(FAISS)
+find_dependency(spdlog)
+find_dependency(nlohmann_json)
+find_dependency(cpprestsdk)
+find_dependency(OpenMP)
+
+# Our library targets
+include("${CMAKE_CURRENT_LIST_DIR}/book_recommender-targets.cmake")
+
+check_required_components(book_recommender)

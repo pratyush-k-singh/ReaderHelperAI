@@ -1,4 +1,5 @@
-#include "BookRecommender.hpp"
+#include "book_recommender/BookRecommender.hpp"
+#include "book_recommender/Document.hpp"
 #include <filesystem>
 #include <algorithm>
 #include <unordered_map>

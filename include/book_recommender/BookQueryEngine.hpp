@@ -4,7 +4,7 @@
 #include <vector>
 #include <optional>
 #include <memory>
-#include "../models/Book.hpp"
+#include "Book.hpp"
 #include "BookVectorStore.hpp"
 
 namespace book_recommender {

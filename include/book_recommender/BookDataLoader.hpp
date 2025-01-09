@@ -5,8 +5,8 @@
 #include <memory>
 #include <filesystem>
 #include "BookPreprocessor.hpp"
-#include "../models/Document.hpp"
-#include "../models/Book.hpp"
+#include "Document.hpp"
+#include "Book.hpp"
 
 namespace book_recommender {
 

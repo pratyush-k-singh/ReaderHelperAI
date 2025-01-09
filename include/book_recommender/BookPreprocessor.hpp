@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "../models/Book.hpp"
-#include "../models/Document.hpp"
+#include "Book.hpp"
+#include "Document.hpp"
 
 namespace book_recommender {
 

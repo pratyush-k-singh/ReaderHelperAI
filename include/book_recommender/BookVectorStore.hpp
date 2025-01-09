@@ -7,7 +7,7 @@
 #include <faiss/IndexFlat.h>
 #include <faiss/IndexIVFFlat.h>
 #include <faiss/utils/distances.h>
-#include "../models/Document.hpp"
+#include "Document.hpp"
 
 namespace book_recommender {
 
